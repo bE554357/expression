@@ -3,6 +3,14 @@
 #include <type_traits>
 #include <iostream>
 
+//include file for matrices
+//https://eigen.tuxfamily.org
+#include "Eigen/Eigen"
+
+
+//alias for matrix type
+using matrix = Eigen::Matrix3d;
+
 
 #include "expression.h"
 #include "binary_expression.h"
@@ -34,8 +42,6 @@ namespace my::expression
  */
 void test()
 {
-	using matrix = Eigen::Matrix3d;
-
 	variable <matrix, 'A'> a;
 	variable <matrix, 'B'> b;
 	variable <matrix, 'C'> c;
