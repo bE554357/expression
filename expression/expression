@@ -1,0 +1,72 @@
+
+
+#include <type_traits>
+#include <iostream>
+
+
+#include "expression.h"
+#include "binary_expression.h"
+#include "unary_expression.h"
+
+
+
+namespace my::expression
+{
+/* NOTES: 
+ * 
+ * all variable are distinguished only by a symbol, but not a type (only 256 different variables), i.e.:
+ * in
+ * variable<matrix, 'A'> var1;
+ * variable<matrix, 'A'> var2;
+ * var1 and var2 are equivalent, because both are 'A'.
+ * 
+ * 
+ * diff is a GATEAUX differential:
+ * d.diff(b, c) is the same like (\partial d)/(\partial b):db (with db = c)
+ * 
+ * now, you cant write like this: 3.141*some_expression,
+ * you shall write like this: constant<double>{3.141}*some_expression
+ * 
+ * All available at this moment operations are presented in binary_expression.h and unary_expression.h
+ * 
+ * 
+ * example of usage expression module:
+ */
+void test()
+{
+	using matrix = Eigen::Matrix3d;
+
+	variable <matrix, 'A'> a;
+	variable <matrix, 'B'> b;
+	variable <matrix, 'C'> c;
+	variable <double, 'G'> g;
+	constant <double> pi{3.141};
+	constant <matrix> idMatrix{matrix::Identity()};
+
+
+//	auto d = addition(multiplication(g, multiplication(a, b)), a);
+//	auto d = det(g*a*b + a);
+	auto d = unimod(b);
+	auto e = d.diff(b, c);
+	auto f = a + b;
+	[[maybe_unused]] auto h = a*b-g*c-pi*idMatrix;
+	
+	std::cout<<sizeof(e)<<std::endl;
+	std::cout<<sizeof(det(b))<<std::endl;
+	
+	
+	std::cout<<"a: "<<a.getString()
+	         <<"\n"<<"b: "<<b.getString()
+	         <<"\n"<<"c: "<<c.getString()
+	         <<"\n"<<"d: "<<d.getString()
+	         <<"\n"<<"e: "<<e.getString()
+	         <<"\n"<<"d: "<<d.setTo(b(matrix::Identity()*3), c(matrix::Identity()*-3.141)).getValue()
+	         <<"\n"<<"e: "<<e.setTo(a(matrix::Identity()), b(matrix::Identity()*3), c(matrix::Identity()*4), g(-2.73)).getValue()
+	         <<"\n"<<"f: "<<f.setTo(a(matrix::Identity()), b(matrix::Identity()*3)).getValue()
+	         <<std::endl;
+
+
+}
+
+
+}
